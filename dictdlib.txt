@@ -1,0 +1,233 @@
+Python Library Documentation: module dictdlib
+
+NAME
+    dictdlib
+
+FILE
+    /home/jgoerzen/tree/dictdlib/dictdlib.py
+
+DESCRIPTION
+    # Dictionary creation library
+    # Copyright (C) 2002 John Goerzen
+    # <jgoerzen@complete.org>
+    #
+    #    This program is free software; you can redistribute it and/or modify
+    #    it under the terms of the GNU General Public License as published by
+    #    the Free Software Foundation; either version 2 of the License, or
+    #    (at your option) any later version.
+    #
+    #    This program is distributed in the hope that it will be useful,
+    #    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    #    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    #    GNU General Public License for more details.
+    #
+    #    You should have received a copy of the GNU General Public License
+    #    along with this program; if not, write to the Free Software
+    #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+CLASSES
+    DictDB
+    DictReader
+    DictWriter
+    
+    class DictDB
+     |  Methods defined here:
+     |  
+     |  __init__(self, basename, mode='read', quiet=0)
+     |      Initialize a DictDB object.
+     |      
+     |      Mode must be one of:
+     |      
+     |      read -- read-only access
+     |      
+     |      write -- write-only access, truncates existing files, does not work
+     |      with .dz.  dict created if nonexistant.
+     |      
+     |      update -- read/write access, dict created if nonexistant.  Does not
+     |      work with .dz.
+     |      
+     |      Read can read dict or dict.dz files.  Write and update will NOT work
+     |      with dict.dz files.
+     |      
+     |      If quiet is nonzero, status messages
+     |      will be suppressed.
+     |  
+     |  _initindex(self)
+     |      Load the entire index off disk into memory.
+     |  
+     |  addentry(self, defstr, headwords)
+     |      Writes an entry.  defstr holds the content of the definition.
+     |      headwords is a list specifying one or more words under which this
+     |      definition should be indexed.  This function always adds \n
+     |      to the end of defstr.
+     |  
+     |  addindexentry(self, word, start, size)
+     |      Adds an entry to the index.  word is the relevant word.
+     |      start is the starting position in the dictionary and size is the
+     |      size of the definition; both are integers.
+     |  
+     |  delindexentry(self, word, start=None, size=None)
+     |      Removes an entry from the index; word is the word to search for.
+     |      
+     |      start and size are optional.  If they are specified, only index
+     |      entries matching the specified values will be removed.
+     |      
+     |      For instance, if word is "foo" and start and size are not specified,
+     |      all index entries for the word foo will be removed.  If start and size
+     |      are specified, only those entries matching all criteria will be
+     |      removed.
+     |      
+     |      This function does not actually remove the data from the .dict file.
+     |      Therefore, information removed by this function will still
+     |      exist on-disk in the .dict file, but the dict server will just
+     |      not "see" it -- there will be no way to get to it anymore.
+     |      
+     |      Returns a count of the deleted entries.
+     |  
+     |  finish(self, dosort=1)
+     |      Called to finish the writing process.
+     |      **REQUIRED IF OPENED WITH 'update' OR 'write' MODES**.
+     |      This will write the index and close the files.
+     |      
+     |      dosort is optional and defaults to true.  If set to false,
+     |      dictlib will not sort the index file.  In this case, you
+     |      MUST manually sort it through "sort -df" before it can be used.
+     |  
+     |  getdef(self, word)
+     |      Given a definition name, returns a list of strings with all
+     |      matching definitions.  This is an *exact* match, not a
+     |      case-insensitive one.  Returns [] if word is not in the dictionary.
+     |  
+     |  getdeflist(self)
+     |      Returns a list of strings naming all definitions contained
+     |      in this dictionary.
+     |  
+     |  hasdef(self, word)
+     |  
+     |  setlonginfo(self, longinfo)
+     |      Sets the extended information for this database.  If there was
+     |      already long info specified, we will use delindexentry() on it
+     |      first.
+     |  
+     |  setshortname(self, shortname)
+     |      Sets the shortname for this database.  If there was already
+     |      a shortname specified, we will use delindexentry() on it first.
+     |  
+     |  seturl(self, url)
+     |      Sets the URL attribute of this database.  If there was
+     |      already a URL specified, we will use delindexentry() on it
+     |      first.
+     |  
+     |  update(self, string)
+     |      Writes string out, if not quiet.
+     |  
+     |  ----------------------------------------------------------------------
+     |  Data and non-method functions defined here:
+     |  
+     |  __doc__ = None
+     |  
+     |  __module__ = 'dictdlib'
+     |      str(object) -> string
+     |      
+     |      Return a nice string representation of the object.
+     |      If the argument is a string, the return value is the same object.
+    
+    class DictReader
+     |  This object provides compatibility with earlier versions
+     |  of dictdlib.  It is now deprecated.
+     |  
+     |  Methods defined here:
+     |  
+     |  __init__(self, basename)
+     |      Initialize a DictReader object.  Provide it with the basename.
+     |  
+     |  getdef(self, defname)
+     |      Given a definition name, returns a list of strings
+     |      with all matching definitions.
+     |  
+     |  getdeflist(self)
+     |      Returns a list of strings naming all definitions contained
+     |      in this dictionary.
+     |  
+     |  ----------------------------------------------------------------------
+     |  Data and non-method functions defined here:
+     |  
+     |  __doc__ = 'This object provides compatibility with earlier versions\n ...
+     |      str(object) -> string
+     |      
+     |      Return a nice string representation of the object.
+     |      If the argument is a string, the return value is the same object.
+     |  
+     |  __module__ = 'dictdlib'
+     |      str(object) -> string
+     |      
+     |      Return a nice string representation of the object.
+     |      If the argument is a string, the return value is the same object.
+    
+    class DictWriter
+     |  This object provides compatibility with earlier versions
+     |  of dictdlib.  It is now deprecated.
+     |  
+     |  Methods defined here:
+     |  
+     |  __init__(self, basename, url='unknown', shortname='unknown', longinfo='unknown', quiet=0)
+     |      Initialize a DictWriter object.  Will create 'basename.dict' and
+     |      'basename.index' files.  url, shortname, and longinfo specify the
+     |      respective attributes of the database.  If quiet is 1,
+     |      status messages are not printed.
+     |  
+     |  finish(self, dosort=1)
+     |      Called to finish the writing process.  **REQUIRED**.
+     |      This will write the index and close the files.
+     |      
+     |      dosort is optional and defaults to true.  If set to false,
+     |      dictlib will not sort the index file.  In this case, you
+     |      MUST manually sort it through "sort -df" before it can be used.
+     |  
+     |  writeentry(self, defstr, headwords)
+     |      Writes an entry.  defstr holds the content of the definition.
+     |      headwords is a list specifying one or more words under which this
+     |      definition should be indexed.  This function always adds \n
+     |      to the end of defstr.
+     |  
+     |  ----------------------------------------------------------------------
+     |  Data and non-method functions defined here:
+     |  
+     |  __doc__ = 'This object provides compatibility with earlier versions\n ...
+     |      str(object) -> string
+     |      
+     |      Return a nice string representation of the object.
+     |      If the argument is a string, the return value is the same object.
+     |  
+     |  __module__ = 'dictdlib'
+     |      str(object) -> string
+     |      
+     |      Return a nice string representation of the object.
+     |      If the argument is a string, the return value is the same object.
+
+FUNCTIONS
+    b64_decode(str)
+        Takes as input a string and returns an integer value of it decoded
+        with the base64 algorithm used by dict indexes.
+    
+    b64_encode(val)
+        Takes as input an integer val and returns a string of it encoded
+        with the base64 algorithm used by dict indexes.
+    
+    sortfunc(x, y)
+        Emulate sort -df.
+    
+    sortnormalize(x)
+        Returns a value such that x is mapped to a format that sorts properly
+        with standard comparison.
+
+DATA
+    __file__ = './dictdlib.py'
+    __name__ = 'dictdlib'
+    b64_list = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz012345...
+    info_headword = '00-database-info'
+    short_headword = '00-database-short'
+    url_headword = '00-database-url'
+    validdict = {'\t': 1, ' ': 1, '0': 1, '1': 1, '2': 1, '3': 1, '4': 1, ...
+    x = '\t'
+
